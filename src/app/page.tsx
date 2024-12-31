@@ -1,37 +1,71 @@
-import Link from "next/link";
+"use client";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import AuthHandler from "~/components/AuthHandler";
+import LoginForm from "~/components/login-form";
+import RegisterForm from "~/components/register-form";
+import { Button } from "~/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
+import { getIdFromToken } from "~/utils/jwt";
+import { storeToken, storeUserId } from "~/utils/localStore";
 
 export default function HomePage() {
+  const [isLogin, setIsLogin] = useState(true);
+
+  const router = useRouter();
+
+  const registerOnSubmit = () => {
+    setIsLogin(true);
+  };
+
+  const loginOnSubmit = async (token: string) => {
+    storeToken(token);
+    storeUserId(getIdFromToken(token));
+    router.push("/dashboard");
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-        <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-          Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-        </h1>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="https://create.t3.gg/en/usage/first-steps"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">First Steps →</h3>
-            <div className="text-lg">
-              Just the basics - Everything you need to know to set up your
-              database and authentication.
+    <AuthHandler type="public">
+      <div
+        className={`dark flex min-h-screen items-center justify-center bg-gradient-to-br from-green-900 to-gray-900`}
+      >
+        <Card className="w-full max-w-md shadow-xl">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl font-bold text-green-400">
+                {isLogin ? "Login" : "Register"}
+              </CardTitle>
             </div>
-          </Link>
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="https://create.t3.gg/en/introduction"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">Documentation →</h3>
-            <div className="text-lg">
-              Learn more about Create T3 App, the libraries it uses, and how to
-              deploy it.
+            <CardDescription>
+              Welcome to PlantGauge. Keep your plants happy!
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLogin ? (
+              <LoginForm onSubmit={loginOnSubmit} />
+            ) : (
+              <RegisterForm onSubmit={registerOnSubmit} />
+            )}
+            <div className="mt-4 text-center">
+              <Button
+                variant="link"
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-green-400"
+              >
+                {isLogin
+                  ? "Don't have an account? Register"
+                  : "Already have an account? Login"}
+              </Button>
             </div>
-          </Link>
-        </div>
+          </CardContent>
+        </Card>
       </div>
-    </main>
+    </AuthHandler>
   );
 }
