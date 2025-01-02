@@ -1,5 +1,5 @@
 import { env } from "~/env";
-import { removeToken } from "~/utils/localStore";
+import { removeToken, removeUserData, removeUserId } from "~/utils/localStore";
 
 export const login = async (
   email: string,
@@ -73,5 +73,7 @@ export const register = async (
 
 export const logout = () => {
   removeToken();
+  removeUserId();
+  removeUserData();
   window.location.href = "/";
 };

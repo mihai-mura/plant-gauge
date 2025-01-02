@@ -1,8 +1,13 @@
 "use client";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Shrub, Sprout, TreePalm } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { addSensor, getUserSensors, type Sensor } from "~/api/sensors";
+import {
+  addSensor,
+  getUserSensors,
+  type Plant,
+  type Sensor,
+} from "~/api/sensors";
 import { AddSensorModal } from "~/components/AddSensorModal";
 import AuthHandler from "~/components/AuthHandler";
 import { Button } from "~/components/ui/button";
@@ -27,8 +32,12 @@ export default function PlantSensorDashboard() {
     fetchSensors();
   }, []);
 
-  const handleAddSensor = async (name: string, location: string) => {
-    const res = await addSensor(name, location);
+  const handleAddSensor = async (
+    name: string,
+    location: string,
+    plantType: Plant,
+  ) => {
+    const res = await addSensor(name, location, plantType);
 
     if (res) setSensors(await getUserSensors(getUserId()!));
   };
@@ -38,7 +47,7 @@ export default function PlantSensorDashboard() {
       <div className="min-h-screen bg-[#0a0a0a] text-gray-100">
         <div className="container mx-auto p-4 pt-10">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-green-300">
+            <h2 className="text-xl font-semibold text-green-600">
               Sensors ({sensors.length})
             </h2>
             <Button
@@ -53,13 +62,24 @@ export default function PlantSensorDashboard() {
             {sensors.map((sensor) => (
               <Link href={`/dashboard/sensors/${sensor.id}`} key={sensor.id}>
                 <Card className="transform border-green-700 bg-[#171717] transition-transform ease-in-out hover:scale-105">
-                  <CardHeader>
-                    <CardTitle className="text-green-400">
-                      {sensor.name}
-                    </CardTitle>
-                    <CardDescription className="text-gray-400">
-                      {sensor.location}
-                    </CardDescription>
+                  <CardHeader className="flex flex-row items-center gap-5">
+                    {sensor.plantType === "succulent" && (
+                      <Shrub className="text-4xl text-slate-300" />
+                    )}
+                    {sensor.plantType === "house" && (
+                      <Sprout className="text-4xl text-slate-300" />
+                    )}
+                    {sensor.plantType === "fern" && (
+                      <TreePalm className="text-4xl text-slate-300" />
+                    )}
+                    <div>
+                      <CardTitle className="text-green-600">
+                        {sensor.name}
+                      </CardTitle>
+                      <CardDescription className="text-gray-400">
+                        {sensor.location}
+                      </CardDescription>
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-300">

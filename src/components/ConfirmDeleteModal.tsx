@@ -36,7 +36,7 @@ export function ConfirmDeleteModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="border-green-700 bg-[#0a0a0a] text-gray-100">
         <DialogHeader>
-          <DialogTitle className="text-green-400">Confirm Deletion</DialogTitle>
+          <DialogTitle className="text-green-600">Confirm Deletion</DialogTitle>
         </DialogHeader>
         <p className="text-gray-300">
           Are you sure you want to delete the sensor {sensorName}? This action

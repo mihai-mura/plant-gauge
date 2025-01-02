@@ -15,5 +15,35 @@ export const storeUserId = (userId: string) => {
 };
 
 export const getUserId = (): string | null => {
-  return localStorage.getItem("userId");
+  if (typeof window !== "undefined") return localStorage.getItem("userId");
+  return null;
+};
+
+export const removeUserId = () => {
+  localStorage.removeItem("userId");
+};
+
+export const storeUserData = (username: string, email: string) => {
+  localStorage.setItem("username", username);
+  localStorage.setItem("email", email);
+};
+
+export const getUserData = (): {
+  username: string | null;
+  email: string | null;
+} => {
+  if (typeof window !== "undefined")
+    return {
+      username: localStorage.getItem("username"),
+      email: localStorage.getItem("email"),
+    };
+  return {
+    username: null,
+    email: null,
+  };
+};
+
+export const removeUserData = () => {
+  localStorage.removeItem("username");
+  localStorage.removeItem("email");
 };

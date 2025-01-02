@@ -5,6 +5,7 @@ export type Sensor = {
   id?: string;
   name: string;
   location: string;
+  plantType: Plant;
   status: string;
   ownedBy: string;
 };
@@ -17,17 +18,38 @@ type SensorRaw = {
   };
   name: string;
   location: string;
+  plantType: Plant;
   status: string;
   ownedBy: string;
 };
+
+export type SensorData = {
+  timestamp: string;
+  moistureLevel: number;
+  sensor_id: string;
+};
+
+export type Plant = "succulent" | "house" | "fern";
 
 const formatSensor = (sensor: SensorRaw): Sensor => ({
   id: sensor.id ? sensor.id.$oid : sensor._id?.$oid,
   name: sensor.name,
   location: sensor.location,
+  plantType: sensor.plantType,
   status: sensor.status,
   ownedBy: sensor.ownedBy,
 });
+
+const formatSensorData = (data: SensorData): SensorData => {
+  return {
+    ...data,
+    timestamp: new Date(data.timestamp).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }),
+  };
+};
 
 export const getUserSensors = async (userId: string): Promise<Sensor[]> => {
   try {
@@ -84,11 +106,13 @@ export const getSensor = async (sensorId: string): Promise<Sensor | null> => {
 export const addSensor = async (
   name: string,
   location: string,
+  plantType: Plant,
 ): Promise<boolean> => {
   try {
     const body = {
       name,
       location,
+      plantType,
       status: "Active",
       ownedBy: getUserId(),
     };
@@ -122,5 +146,34 @@ export const deleteSensor = async (sensorId: string): Promise<boolean> => {
     return true;
   } catch {
     return false;
+  }
+};
+
+//http://localhost:8081/api/sensors/123/history?limit=10&offset=0
+export const getSensorData = async (
+  sensorId: string,
+  limit: number,
+): Promise<SensorData[]> => {
+  try {
+    const res = await fetch(
+      `${env.NEXT_PUBLIC_API_URL}/sensors/${sensorId}/history?limit=${limit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+          client_id: env.NEXT_PUBLIC_CLIENT_ID,
+          client_secret: env.NEXT_PUBLIC_CLIENT_SECRET,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    if (res.status === 200) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const json: SensorData[] = await res.json();
+      return json.map(formatSensorData);
+    }
+
+    return [];
+  } catch {
+    return [];
   }
 };
