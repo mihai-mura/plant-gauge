@@ -14,13 +14,6 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-      <head>
-        {/* Script do Lottie Player */}
-        <script
-          src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
-          type="module"
-        ></script>
-      </head>
       <body>{children}</body>
     </html>
   );

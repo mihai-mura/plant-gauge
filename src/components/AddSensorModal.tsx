@@ -1,12 +1,18 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/ui/dialog";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
 import { useState } from "react";
+import { type Plant } from "~/api/sensors";
+import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
+import { Input } from "~/components/ui/input";
 
 type AddSensorModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onAddSensor: (name: string, location: string, plantType: string) => void;
+  onAddSensor: (name: string, location: string, plantType: Plant) => void;
 };
 
 export const AddSensorModal = ({
@@ -16,7 +22,7 @@ export const AddSensorModal = ({
 }: AddSensorModalProps) => {
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
-  const [plantType, setPlantType] = useState("");
+  const [plantType, setPlantType] = useState<Plant>("succulent");
 
   const handleSubmit = () => {
     if (name && location && plantType) {
@@ -27,7 +33,7 @@ export const AddSensorModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-white rounded-lg p-6 shadow-lg">
+      <DialogContent className="rounded-lg bg-white p-6 shadow-lg">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold text-gray-800">
             Add New Sensor
@@ -51,7 +57,7 @@ export const AddSensorModal = ({
           {/* Tipo de Planta */}
           <select
             value={plantType}
-            onChange={(e) => setPlantType(e.target.value)}
+            onChange={(e) => setPlantType(e.target.value as Plant)}
             className="w-full rounded-md border border-gray-300 bg-white p-2 text-gray-700 shadow-sm"
           >
             <option value="" disabled>

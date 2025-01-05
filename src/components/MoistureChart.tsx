@@ -1,5 +1,6 @@
 "use client";
 
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { useEffect, useState } from "react";
 import {
   CartesianGrid,
@@ -103,7 +104,12 @@ export function MoistureChart(props: MoistureChartProps) {
           </ResponsiveContainer>
         </ChartContainer>
       ) : (
-        <div className="flex flex-col items-center justify-center h-full">
+        <div className="flex h-full flex-col items-center justify-center">
+          <DotLottieReact
+            src="https://lottie.host/5039bb1c-e943-489a-939b-d2cd93c6be52/WoSI5mqo7S.lottie"
+            loop
+            autoplay
+          />
           <p className="mt-4 text-center text-gray-600">
             No data available. Please check your sensor.
           </p>
