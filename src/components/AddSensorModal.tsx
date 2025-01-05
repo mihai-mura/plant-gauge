@@ -1,133 +1,85 @@
-"use client";
-
-import { Loader2, Shrub, Sprout, TreePalm } from "lucide-react";
-import { useState } from "react";
-import { type Plant } from "~/api/sensors";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { Button } from "~/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
+import { useState } from "react";
 
-interface AddSensorModalProps {
+type AddSensorModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onAddSensor: (
-    name: string,
-    location: string,
-    plantType: Plant,
-  ) => Promise<void>;
-}
+  onAddSensor: (name: string, location: string, plantType: string) => void;
+};
 
-export function AddSensorModal({
+export const AddSensorModal = ({
   isOpen,
   onClose,
   onAddSensor,
-}: AddSensorModalProps) {
+}: AddSensorModalProps) => {
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
-  const [plantType, setPlantType] = useState<Plant>("succulent");
-  const [isLoading, setIsLoading] = useState(false);
+  const [plantType, setPlantType] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name || !location) return;
-    setIsLoading(true);
-    await onAddSensor(name, location, plantType);
-    setName("");
-    setLocation("");
-    setIsLoading(false);
-    onClose();
+  const handleSubmit = () => {
+    if (name && location && plantType) {
+      onAddSensor(name, location, plantType);
+      onClose();
+    }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="border-green-700 bg-[#0a0a0a] text-gray-100">
+      <DialogContent className="bg-white rounded-lg p-6 shadow-lg">
         <DialogHeader>
-          <DialogTitle className="text-green-600">Add New Sensor</DialogTitle>
+          <DialogTitle className="text-lg font-semibold text-gray-800">
+            Add New Sensor
+          </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="name" className="text-gray-300">
-              Name
-            </Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="border-green-600 bg-[#171717] text-gray-100 focus:border-green-500"
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="location" className="text-gray-300">
-              Location
-            </Label>
-            <Input
-              id="location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="border-green-600 bg-[#171717] text-gray-100 focus:border-green-500"
-              required
-            />
-          </div>
-          <div>
-            <Label className="text-gray-300">Plant Type</Label>
-            <div className="flex space-x-2">
-              <Button
-                type="button"
-                className={`${
-                  plantType === "succulent" ? "bg-green-700" : "bg-gray-700"
-                } transform rounded-full text-white active:scale-95`}
-                onClick={() => setPlantType("succulent")}
-              >
-                <Shrub />
-                Succulent
-              </Button>
-              <Button
-                type="button"
-                className={`${
-                  plantType === "house" ? "bg-green-700" : "bg-gray-700"
-                } transform rounded-full text-white active:scale-95`}
-                onClick={() => setPlantType("house")}
-              >
-                <Sprout />
-                Houseplant
-              </Button>
-              <Button
-                type="button"
-                className={`${
-                  plantType === "fern" ? "bg-green-700" : "bg-gray-700"
-                } transform rounded-full text-white active:scale-95`}
-                onClick={() => setPlantType("fern")}
-              >
-                <TreePalm />
-                Fern
-              </Button>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              type="submit"
-              className="transform rounded-full bg-green-700 text-white hover:bg-green-600 active:scale-95"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="animate-spin" />
-                  Adding Sensor...
-                </>
-              ) : (
-                "Add Sensor"
-              )}
-            </Button>
-          </DialogFooter>
-        </form>
+        <div className="space-y-4">
+          {/* Nome do Sensor */}
+          <Input
+            placeholder="Sensor Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="border-gray-300"
+          />
+          {/* Localização */}
+          <Input
+            placeholder="Location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="border-gray-300"
+          />
+          {/* Tipo de Planta */}
+          <select
+            value={plantType}
+            onChange={(e) => setPlantType(e.target.value)}
+            className="w-full rounded-md border border-gray-300 bg-white p-2 text-gray-700 shadow-sm"
+          >
+            <option value="" disabled>
+              Select Plant Type
+            </option>
+            <option value="succulent">Succulent</option>
+            <option value="house">House Plant</option>
+            <option value="fern">Fern</option>
+          </select>
+        </div>
+        <div className="mt-6 flex justify-end space-x-4">
+          {/* Botão Cancelar */}
+          <Button
+            variant="outline"
+            className="text-gray-600 hover:bg-gray-100"
+            onClick={onClose}
+          >
+            Cancel
+          </Button>
+          {/* Botão Adicionar */}
+          <Button
+            className="bg-green-600 text-white hover:bg-green-500"
+            onClick={handleSubmit}
+          >
+            Add Sensor
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
-}
+};

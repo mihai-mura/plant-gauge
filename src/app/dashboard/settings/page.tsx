@@ -34,16 +34,18 @@ const Settings = () => {
 
   return (
     <AuthHandler type="private">
-      <div className="flex min-h-screen w-full flex-col items-center bg-[#0a0a0a] p-20">
-        <Card className="min-w-[60rem] max-w-7xl border-gray-800 bg-[#121212]">
+      <div className="flex min-h-screen w-full flex-col items-center bg-gray-100 p-20">
+        <Card className="min-w-[40rem] max-w-5xl rounded-lg border border-gray-300 bg-white shadow-lg">
           <CardHeader>
-            <CardTitle className="text-gray-100">Edit Profile</CardTitle>
+            <CardTitle className="text-2xl font-bold text-gray-800">
+              Edit Profile
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="username" className="text-gray-300">
-                  @username
+                <Label htmlFor="username" className="text-gray-600">
+                  Username
                 </Label>
                 <Input
                   id="username"
@@ -51,11 +53,11 @@ const Settings = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
-                  className="border-gray-700 bg-gray-800 text-gray-100 focus:border-green-500"
+                  className="rounded-lg border border-gray-300 p-2 text-gray-700 shadow-sm focus:border-green-500 focus:ring focus:ring-green-300"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-gray-300">
+                <Label htmlFor="email" className="text-gray-600">
                   Email
                 </Label>
                 <Input
@@ -64,11 +66,11 @@ const Settings = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="border-gray-700 bg-gray-800 text-gray-100 focus:border-green-500"
+                  className="rounded-lg border border-gray-300 p-2 text-gray-700 shadow-sm focus:border-green-500 focus:ring focus:ring-green-300"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-gray-300">
+                <Label htmlFor="password" className="text-gray-600">
                   Password
                 </Label>
                 <Input
@@ -78,23 +80,25 @@ const Settings = () => {
                   value={password}
                   required
                   onChange={(e) => setPassword(e.target.value)}
-                  className="border-gray-700 bg-gray-800 text-gray-100 focus:border-green-500"
+                  className="rounded-lg border border-gray-300 p-2 text-gray-700 shadow-sm focus:border-green-500 focus:ring focus:ring-green-300"
                 />
               </div>
-              <Button
-                type="submit"
-                className="bg-green-600 text-black hover:bg-green-700"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="animate-spin" />
-                    Updating...
-                  </>
-                ) : (
-                  "Update Profile"
-                )}
-              </Button>
+              <div className="flex justify-end">
+                <Button
+                  type="submit"
+                  className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white shadow-md hover:bg-green-500 focus:outline-none focus:ring focus:ring-green-300"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    "Update Profile"
+                  )}
+                </Button>
+              </div>
             </form>
           </CardContent>
         </Card>

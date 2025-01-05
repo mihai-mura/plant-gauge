@@ -70,58 +70,68 @@ export default function SensorDetailPage() {
     <FullPageLoader />
   ) : (
     <AuthHandler type="private">
-      <div className="min-h-screen bg-gray-950 text-gray-100">
-        <div className="container mx-auto p-4">
-          <div className="mb-4 flex items-center justify-between">
+      <div className="min-h-screen bg-gray-100 text-gray-800">
+        <div className="container mx-auto p-6">
+          <div className="mb-6 flex items-center justify-between">
+            {/* Botão Voltar */}
             <Button
-              variant="ghost"
+              variant="outline"
               onClick={() => router.back()}
-              className="text-green-600 hover:text-green-300"
+              className="flex items-center gap-2 text-green-600 hover:bg-green-500"
             >
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Dashboard
+              <ArrowLeft className="h-5 w-5" />
+              Back to Dashboard
             </Button>
+            {/* Botão Deletar */}
             <Button
-              variant="ghost"
+              variant="outline"
               onClick={() => setIsDeleteModalOpen(true)}
-              className="text-red-400 hover:text-red-300"
+              className="flex items-center gap-2 text-red-600 hover:bg-red-500"
             >
-              <Trash2 className="mr-2 h-4 w-4" /> Delete Plant
+              <Trash2 className="h-5 w-5" />
+              Delete Plant
             </Button>
           </div>
 
-          <Card className="dark">
-            <CardHeader className="flex flex-row items-center gap-5">
+          {/* Card Principal */}
+          <Card className="rounded-lg border border-gray-300 bg-white shadow-md">
+            <CardHeader className="flex items-center gap-4 p-6">
+              {/* Ícone Baseado no Tipo de Planta */}
               {sensor.plantType === "succulent" && (
-                <Shrub className="text-4xl text-slate-300" />
+                <Shrub className="h-12 w-12 text-green-500" />
               )}
               {sensor.plantType === "house" && (
-                <Sprout className="text-4xl text-slate-300" />
+                <Sprout className="h-12 w-12 text-green-500" />
               )}
               {sensor.plantType === "fern" && (
-                <TreePalm className="text-4xl text-slate-300" />
+                <TreePalm className="h-12 w-12 text-green-500" />
               )}
               <div>
-                <CardTitle>{sensor.name}</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl font-bold text-gray-800">
+                  {sensor.name}
+                </CardTitle>
+                <CardDescription className="text-gray-500">
                   {capitalizeFirstLetter(sensor.plantType)}
                 </CardDescription>
               </div>
             </CardHeader>
-            <CardContent className="px-2">
+            <CardContent>
+              {/* Gráfico de Umidade */}
               <MoistureChart chartData={chartData} />
             </CardContent>
-            <CardFooter className="flex-col items-start gap-2 text-sm">
-              <div className="flex gap-2 font-medium leading-none">
+            <CardFooter className="flex flex-col gap-2 p-6 text-sm text-gray-600">
+              <div className="flex items-center gap-2 font-medium text-gray-800">
                 Average moisture level:{" "}
-                {calculateMean(chartData.map((data) => data.moistureLevel))}%{" "}
-                <TrendingDown className="h-4 w-4" />
+                <span className="text-green-600">
+                  {calculateMean(chartData.map((data) => data.moistureLevel))}%
+                </span>
+                <TrendingDown className="h-5 w-5 text-green-500" />
               </div>
-              <div className="leading-none text-muted-foreground">
-                Showing last 20 readings
-              </div>
+              <div>Showing last 20 readings</div>
             </CardFooter>
           </Card>
 
+          {/* Modal de Confirmação */}
           <ConfirmDeleteModal
             isOpen={isDeleteModalOpen}
             onClose={() => setIsDeleteModalOpen(false)}
