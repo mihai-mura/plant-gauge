@@ -1,5 +1,6 @@
 "use client";
 
+import { Sprout } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { getUser } from "~/api/users";
@@ -16,7 +17,6 @@ import {
 } from "~/components/ui/card";
 import { getIdFromToken } from "~/utils/jwt";
 import { storeToken, storeUserData, storeUserId } from "~/utils/localStore";
-import { TreePalm } from "lucide-react";
 
 export default function HomePage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -41,10 +41,10 @@ export default function HomePage() {
   return (
     <AuthHandler type="public">
       <div className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
-        <Card className="w-full max-w-3xl flex flex-row overflow-hidden rounded-lg border border-gray-300 bg-white shadow-lg">
+        <Card className="flex w-full max-w-3xl flex-row overflow-hidden rounded-lg border border-gray-300 bg-white shadow-lg">
           {/* Seção da Esquerda com o Ícone */}
           <div className="flex w-1/3 items-center justify-center bg-green-100 p-4">
-            <TreePalm className="h-32 w-32 text-green-600" />
+            <Sprout className="h-32 w-32 text-green-600" />
           </div>
 
           {/* Seção da Direita com o Formulário */}
