@@ -1,5 +1,6 @@
 "use client";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { updateUser } from "~/api/users";
 import AuthHandler from "~/components/AuthHandler";
@@ -14,6 +15,7 @@ const Settings = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setUsername(getUserData().username ?? "");
@@ -35,17 +37,15 @@ const Settings = () => {
   return (
     <AuthHandler type="private">
       <div className="flex min-h-screen w-full flex-col items-center bg-gray-100 p-20">
-        <Card className="min-w-[40rem] max-w-5xl rounded-lg border border-gray-300 bg-white shadow-lg">
+        <Card className="min-w-[60rem] max-w-7xl border-gray-300 bg-white">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-gray-800">
-              Edit Profile
-            </CardTitle>
+            <CardTitle className="text-gray-800">Edit Profile</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="username" className="text-gray-600">
-                  Username
+                  @username
                 </Label>
                 <Input
                   id="username"
@@ -53,7 +53,7 @@ const Settings = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
-                  className="rounded-lg border border-gray-300 p-2 text-gray-700 shadow-sm focus:border-green-500 focus:ring focus:ring-green-300"
+                  className="border-gray-300 bg-white text-gray-800 focus:border-green-500"
                 />
               </div>
               <div className="space-y-2">
@@ -66,7 +66,7 @@ const Settings = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="rounded-lg border border-gray-300 p-2 text-gray-700 shadow-sm focus:border-green-500 focus:ring focus:ring-green-300"
+                  className="border-gray-300 bg-white text-gray-800 focus:border-green-500"
                 />
               </div>
               <div className="space-y-2">
@@ -80,18 +80,25 @@ const Settings = () => {
                   value={password}
                   required
                   onChange={(e) => setPassword(e.target.value)}
-                  className="rounded-lg border border-gray-300 p-2 text-gray-700 shadow-sm focus:border-green-500 focus:ring focus:ring-green-300"
+                  className="border-gray-300 bg-white text-gray-800 focus:border-green-500"
                 />
               </div>
-              <div className="flex justify-end">
+              <div className="flex items-center justify-between">
+                <Button
+                  variant="outline"
+                  onClick={() => router.push("/dashboard")}
+                  className="flex items-center gap-2 text-green-600 hover:bg-green-500"
+                >
+                  Back to Dashboard
+                </Button>
                 <Button
                   type="submit"
-                  className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white shadow-md hover:bg-green-500 focus:outline-none focus:ring focus:ring-green-300"
+                  className="bg-green-600 text-white hover:bg-green-700"
                   disabled={loading}
                 >
                   {loading ? (
                     <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <Loader2 className="animate-spin" />
                       Updating...
                     </>
                   ) : (

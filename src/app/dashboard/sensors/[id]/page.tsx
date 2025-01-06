@@ -2,6 +2,7 @@
 
 import {
   ArrowLeft,
+  Pencil,
   Shrub,
   Sprout,
   Trash2,
@@ -14,13 +15,17 @@ import {
   deleteSensor,
   getSensor,
   getSensorData,
+  updateSensor,
+  type Plant,
   type Sensor,
   type SensorData,
 } from "~/api/sensors";
 import AuthHandler from "~/components/AuthHandler";
 import { ConfirmDeleteModal } from "~/components/ConfirmDeleteModal";
+import EditPlantModal from "~/components/EditPlantModal";
 import FullPageLoader from "~/components/FullPageLoader";
 import { MoistureChart } from "~/components/MoistureChart";
+import PlantHealthChip from "~/components/PlantHealthChip";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -31,11 +36,14 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
+const DATA_READINGS = 15;
+
 const capitalizeFirstLetter = (string: string): string => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
 const calculateMean = (data: number[]): string => {
+  if (data.length === 0) return "0.00";
   const sum = data.reduce((acc, value) => acc + value, 0);
   const mean = sum / data.length;
   return mean.toFixed(2);
@@ -46,6 +54,7 @@ export default function SensorDetailPage() {
   const { id } = useParams();
   const [sensor, setSensor] = useState<Sensor | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [chartData, setChartData] = useState<SensorData[]>([]);
 
   useEffect(() => {
@@ -53,7 +62,7 @@ export default function SensorDetailPage() {
       if (id) {
         const res = await getSensor(id as string);
         setSensor(res);
-        const chartData = await getSensorData(id as string, 20);
+        const chartData = await getSensorData(id as string, DATA_READINGS);
         setChartData(chartData);
       }
     };
@@ -66,21 +75,47 @@ export default function SensorDetailPage() {
     if (res) router.push("/dashboard");
   };
 
+  const handleEditSensor = async (
+    name: string,
+    location: string,
+    plantType: Plant,
+  ) => {
+    const res = await updateSensor(id as string, name, location, plantType);
+    if (res) {
+      setIsEditModalOpen(false);
+      setSensor((prev) => {
+        if (!prev) return prev;
+        return { ...prev, name, location, plantType };
+      });
+    } else {
+      setIsEditModalOpen(false);
+    }
+  };
+
   return !sensor ? (
     <FullPageLoader />
   ) : (
     <AuthHandler type="private">
       <div className="min-h-screen bg-gray-100 text-gray-800">
         <div className="container mx-auto p-6">
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex items-center justify-between gap-2">
             {/* Botão Voltar */}
             <Button
               variant="outline"
-              onClick={() => router.back()}
+              onClick={() => router.push("/dashboard")}
               className="flex items-center gap-2 text-green-600 hover:bg-green-500"
             >
               <ArrowLeft className="h-5 w-5" />
               Back to Dashboard
+            </Button>
+            {/* Botão Deletar */}
+            <Button
+              variant="outline"
+              onClick={() => setIsEditModalOpen(true)}
+              className="ml-auto flex items-center gap-2 text-green-600 hover:bg-green-500"
+            >
+              <Pencil className="h-5 w-5" />
+              Edit Plant
             </Button>
             {/* Botão Deletar */}
             <Button
@@ -106,14 +141,20 @@ export default function SensorDetailPage() {
               {sensor.plantType === "fern" && (
                 <TreePalm className="h-12 w-12 text-green-500" />
               )}
-              <div>
+              <div className="flex flex-col items-center">
                 <CardTitle className="text-2xl font-bold text-gray-800">
                   {sensor.name}
                 </CardTitle>
                 <CardDescription className="text-gray-500">
-                  {capitalizeFirstLetter(sensor.plantType)}
+                  {capitalizeFirstLetter(sensor.plantType)} - {sensor.location}
                 </CardDescription>
               </div>
+              <PlantHealthChip
+                plantType={sensor.plantType}
+                moistureLevel={
+                  chartData[chartData.length - 1]?.moistureLevel ?? null
+                }
+              />
             </CardHeader>
             <CardContent>
               {/* Gráfico de Umidade */}
@@ -127,7 +168,7 @@ export default function SensorDetailPage() {
                 </span>
                 <TrendingDown className="h-5 w-5 text-green-500" />
               </div>
-              <div>Showing last 20 readings</div>
+              <div>Showing last {DATA_READINGS} readings</div>
             </CardFooter>
           </Card>
 
@@ -137,6 +178,14 @@ export default function SensorDetailPage() {
             onClose={() => setIsDeleteModalOpen(false)}
             onConfirm={handleDeleteSensor}
             sensorName={sensor.name}
+          />
+          <EditPlantModal
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            onConfirm={handleEditSensor}
+            sensorName={sensor.name}
+            sensorLocation={sensor.location}
+            plantType={sensor.plantType}
           />
         </div>
       </div>

@@ -149,7 +149,38 @@ export const deleteSensor = async (sensorId: string): Promise<boolean> => {
   }
 };
 
-//http://localhost:8081/api/sensors/123/history?limit=10&offset=0
+export const updateSensor = async (
+  sensorId: string,
+  name: string,
+  location: string,
+  plantType: Plant,
+): Promise<boolean> => {
+  try {
+    const body = {
+      name,
+      location,
+      plantType,
+      status: "Active",
+      ownedBy: getUserId(),
+    };
+
+    const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/sensors/${sensorId}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+        client_id: env.NEXT_PUBLIC_CLIENT_ID,
+        client_secret: env.NEXT_PUBLIC_CLIENT_SECRET,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    if (res.status === 200) return true;
+    return false;
+  } catch {
+    return false;
+  }
+};
+
 export const getSensorData = async (
   sensorId: string,
   limit: number,

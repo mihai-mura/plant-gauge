@@ -5,12 +5,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
   addSensor,
+  getSensorData,
   getUserSensors,
   type Plant,
   type Sensor,
 } from "~/api/sensors";
 import { AddSensorModal } from "~/components/AddSensorModal";
 import AuthHandler from "~/components/AuthHandler";
+import PlantHealthChip from "~/components/PlantHealthChip";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -23,6 +25,9 @@ import { getUserId } from "~/utils/localStore";
 
 export default function PlantSensorDashboard() {
   const [sensors, setSensors] = useState<Sensor[]>([]);
+  const [lastMoistureReadings, setLastMoistureReadings] = useState<
+    (number | null)[]
+  >([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Busca sensores do usuário ao carregar a página
@@ -36,6 +41,20 @@ export default function PlantSensorDashboard() {
 
     fetchSensors();
   }, []);
+
+  useEffect(() => {
+    const fetchSensorLastData = async () => {
+      const moistureReadings = await Promise.all(
+        sensors.map(async (sensor) => {
+          const data = await getSensorData(sensor.id ?? "", 1);
+          return data[0]?.moistureLevel ?? null;
+        }),
+      );
+      setLastMoistureReadings(moistureReadings);
+    };
+
+    fetchSensorLastData();
+  }, [sensors]);
 
   // Função para adicionar novo sensor
   const handleAddSensor = async (
@@ -56,8 +75,10 @@ export default function PlantSensorDashboard() {
         {/* Conteúdo principal */}
         <div className="container mx-auto p-6 pt-10">
           <header className="mb-8 text-center">
-            <h1 className="text-4xl font-bold text-green-600">Plant Dashboard</h1>
-            <p className="text-gray-600 text-sm">
+            <h1 className="text-4xl font-bold text-green-600">
+              Plant Dashboard
+            </h1>
+            <p className="text-sm text-gray-600">
               Manage your sensors and monitor your plants with ease.
             </p>
           </header>
@@ -68,7 +89,7 @@ export default function PlantSensorDashboard() {
               Sensors ({sensors.length})
             </h2>
             <Button
-              className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-500 transition-transform transform active:scale-95"
+              className="flex transform items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white transition-transform hover:bg-green-500 active:scale-95"
               onClick={() => setIsModalOpen(true)}
             >
               <PlusCircle className="h-5 w-5" /> Add New Sensor
@@ -77,7 +98,7 @@ export default function PlantSensorDashboard() {
 
           {/* Lista de sensores */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {sensors.map((sensor) => (
+            {sensors.map((sensor, index) => (
               <Link href={`/dashboard/sensors/${sensor.id}`} key={sensor.id}>
                 <Card className="transform border border-gray-300 bg-white shadow-md transition-transform ease-in-out hover:scale-105 hover:shadow-lg">
                   <CardHeader className="flex flex-row items-center gap-4 p-4">
@@ -91,14 +112,21 @@ export default function PlantSensorDashboard() {
                       <TreePalm className="text-5xl text-green-500" />
                     )}
                     <div>
-                      <CardTitle className="text-green-700">{sensor.name}</CardTitle>
+                      <CardTitle className="text-green-700">
+                        {sensor.name}
+                      </CardTitle>
                       <CardDescription className="text-gray-500">
                         {sensor.location}
                       </CardDescription>
                     </div>
+                    <PlantHealthChip
+                      className="ml-auto"
+                      moistureLevel={lastMoistureReadings[index]}
+                      plantType={sensor.plantType}
+                    />
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-sm text-gray-600">
                       Click to view details and monitor moisture levels.
                     </p>
                   </CardContent>

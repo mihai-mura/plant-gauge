@@ -42,11 +42,11 @@ export function ConfirmDeleteModal({
           </DialogTitle>
         </DialogHeader>
         <p className="text-gray-600">
-          Are you sure you want to delete the sensor{" "}
-          <span className="font-semibold text-gray-800">{sensorName}</span>? This
-          action cannot be undone.
+          Are you sure you want to delete{" "}
+          <span className="font-semibold text-gray-800">{sensorName}</span>?
+          This action cannot be undone.
         </p>
-        <DialogFooter className="flex justify-end space-x-4 mt-6">
+        <DialogFooter className="mt-6 flex justify-end space-x-4">
           <Button
             onClick={onClose}
             variant="outline"
